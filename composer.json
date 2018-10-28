@@ -1,0 +1,20 @@
+{
+    "name": "gustavofenilli/cepfinder",
+    "description": "Pacote que use a API do ViaCEP para busca de logradouro usando CEP.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gustavo Fenilli",
+            "email": "gustavo.fenilli.trabalho@outlook.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "GustavoFenilli\\CEPFinder\\": "src"
+        }
+    }
+}
