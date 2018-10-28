@@ -43,14 +43,16 @@ class CEPFinder
         } catch (GuzzleException $exception) {
             return $exception->getResponse()->getStatusCode();
         }
+        
+        $response = json_decode($result->getBody(), true);
 
-        $this->apiResult = json_decode($result->getBody(), true);
-
-        foreach ($this->apiResult as $key => $value) {
-            if (property_exists($this, $key)) {
+        foreach($response as $key => $value){
+            if(property_exists($this, $key)){
                 $this->$key = $value;
             }
         }
+
+        $this->setArrayByAttributes();
 
         return $result->getStatusCode();
     }
@@ -123,6 +125,22 @@ class CEPFinder
         $value = $arguments[0];
         $attribute = $this->lowerCaseAttribute($attribute);
         $this->{$attribute} = $value;
+        $this->apiResult[$attribute] = $this->{$attribute};
+    }
+
+    private function setArrayByAttributes()
+    {
+        $this->apiResult = [
+            'cep' => $this->cep,
+            'logradouro' => $this->logradouro,
+            'complemento' => $this->complemento,
+            'bairro' => $this->bairro,
+            'localidade' => $this->localidade,
+            'uf' => $this->uf,
+            'unidade' => $this->unidade,
+            'ibge' => $this->ibge,
+            'gia' => $this->gia
+        ];
     }
 
     private function lowerCaseAttribute($attribute)
