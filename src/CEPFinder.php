@@ -154,10 +154,10 @@ class CEPFinder
             if (is_array($value)) {
                 if (!is_numeric($key)) {
                     $subnode = $xml->addChild("$key");
-                    array_to_xml($value, $subnode);
-                } else {
+                    $this->arrayToXml($value, $subnode);
+                }else{
                     $subnode = $xml->addChild("item$key");
-                    array_to_xml($value, $subnode);
+                    $this->arrayToXml($value, $subnode);
                 }
             } else {
                 $xml->addChild("$key", htmlspecialchars("$value"));
