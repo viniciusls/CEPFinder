@@ -9,7 +9,7 @@ e que seu projeto siga os padrões de autoload da psr-4.
 
 ### Pre Requisitos
 
-[Composer] (https://getcomposer.org/download/)
+[Composer](https://getcomposer.org/download/)
 
 ### Instalação
 
@@ -65,6 +65,7 @@ A resposta pode ser recebida em JSON ou XML nos formatos
 use GustavoFenilli\CEPFinder\CEPFinder;
 
 // É possivel instanciar o objeto CEPFinder ja com o CEP desejado
+
 $cepFinder = new CEPFinder(00000000);
 if($cepFinder->consult() != 200){
     throw new \Exception("Erro ao buscar no cep");
@@ -74,16 +75,25 @@ if($cepFinder->consult() != 200){
 ** o valor tem prioridade em cima da instancia do objeto, porem ele não sobrescreve
 ** o valor do objeto
 */
+
 $cep = '00000000';
 if($cepFinder->consult($cep) != 200){
     throw new \Exception("Erro ao buscar no cep");
 }
 
+// Também é possivel usar o setCep() depois do objeto instanciado
+$cepFinder->setCep(00000000);
+if($cepFinder->consult() != 200){
+    throw new \Exception("Erro ao buscar no cep");
+}
+
 // Para pegar valores separadamente use get{NomeAtributo}()
+
 $cep = $cepFinder->getCep();
 // 00000000
 
 // Para modificar valores depois de recebidos use set{NomeAtributo}($valor)
+
 $cepFinder->setCep(11111111);
 // 11111111
 
