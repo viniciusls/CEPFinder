@@ -9,8 +9,8 @@ use GuzzleHttp\Client;
 class CEPFinder
 {
     private $client;
-
     private $apiResult;
+    const API_URL = "https://viacep.com.br/ws/{cep}/json/";
 
     protected $cep;
     protected $logradouro;
@@ -30,7 +30,7 @@ class CEPFinder
 
     public function consult($cep = null)
     {
-        if($cep != null){
+        if ($cep != null) {
             $cepEscoped = $cep;
         } else {
             $cepEscoped = $this->cep;
@@ -39,12 +39,13 @@ class CEPFinder
         if (!$cepEscoped) {
             throw new \Exception("CEP não informado.");
         }
-        
-        try{
-            $result = $this->client->get("viacep.com.br/ws/$cepEscoped/json/");
-        }catch(GuzzleException $exception){
+      
+        try {
+            $result = $this->client->get(str_replace("{cep}", $cepEscoped, self::API_URL));
+        } catch (GuzzleException $exception) {
             return $exception->getResponse()->getStatusCode();
         }
+        
         $response = json_decode($result->getBody(), true);
 
         foreach($response as $key => $value){
@@ -73,7 +74,7 @@ class CEPFinder
 
     public function __set($name, $value)
     {
-        if(!property_exists($this, $name)){
+        if (!property_exists($this, $name)) {
             throw new \Exception("Propriedade $name não existe");
         }
 
@@ -82,7 +83,7 @@ class CEPFinder
 
     public function __get($name)
     {
-        if(!property_exists($this, $name)){
+        if (!property_exists($this, $name)) {
             throw new \Exception("Propriedade $name não existe");
         }
 
@@ -93,17 +94,17 @@ class CEPFinder
     {
         $resultPreg = $this->getArrayFromMethodCall($method);
 
-        if(!sizeof($resultPreg) > 1){
-            throw new \Exception("Metodo $method não existe");
+        if (!sizeof($resultPreg) > 1) {
+            throw new \Exception("Método $method não existe");
         }
 
-        if($resultPreg[0] == 'get'){
+        if ($resultPreg[0] == 'get') {
             return $this->getAttribute($resultPreg[1]);
-        }else if($resultPreg[0] == 'set'){
+        } else if ($resultPreg[0] == 'set') {
             return $this->setAttribute($resultPreg[1], $arguments);
         }
 
-        throw new \Exception("Metodo $method não existe");
+        throw new \Exception("Método $method não existe");
     }
 
     private function getArrayFromMethodCall($method)
@@ -119,8 +120,8 @@ class CEPFinder
 
     private function setAttribute($attribute, $arguments)
     {
-        if(sizeof($arguments) > 1){
-            throw new \Exception("Este metodo so aceita um argumento");
+        if (sizeof($arguments) > 1) {
+            throw new \Exception("Este método só aceita um argumento");
         }
 
         $value = $arguments[0];
@@ -149,18 +150,19 @@ class CEPFinder
         return mb_strtolower($attribute);
     }
 
-    private function arrayToXml($array, &$xml) {
-        foreach($array as $key => $value) {
-            if(is_array($value)) {
-                if(!is_numeric($key)){
+    private function arrayToXml($array, &$xml)
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                if (!is_numeric($key)) {
                     $subnode = $xml->addChild("$key");
-                    array_to_xml($value, $subnode);
+                    $this->arrayToXml($value, $subnode);
                 }else{
                     $subnode = $xml->addChild("item$key");
-                    array_to_xml($value, $subnode);
+                    $this->arrayToXml($value, $subnode);
                 }
-            }else {
-                $xml->addChild("$key",htmlspecialchars("$value"));
+            } else {
+                $xml->addChild("$key", htmlspecialchars("$value"));
             }
         }
     }
