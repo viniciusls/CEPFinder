@@ -2,6 +2,7 @@
 
 namespace GustavoFenilli\CEPFinder;
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 
@@ -22,21 +23,23 @@ class CEPFinder
     protected $gia;
 
     public function __construct($cep = null){
-        if($cep != null) $this->cep = $cep;
+        $this->cep = $cep;
 
         $this->client = new Client();
     }
 
     public function consult($cep = null)
     {
-        if(isset($this->cep)){
-            $cepEscoped = $this->cep;
-        }
-        
         if($cep != null){
             $cepEscoped = $cep;
+        } else {
+            $cepEscoped = $this->cep;
         }
 
+        if (!$cepEscoped) {
+            throw new \Exception("CEP não informado.");
+        }
+        
         try{
             $result = $this->client->get("viacep.com.br/ws/$cepEscoped/json/");
         }catch(GuzzleException $exception){
